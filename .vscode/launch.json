@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Server",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/caddy-ja3/main.go",
+            "args": ["run", "--config", "${workspaceFolder}/Caddyfile"],
+            "cwd": "${workspaceFolder}/cmd/caddy-ja3"
+        }
+    ]
+}

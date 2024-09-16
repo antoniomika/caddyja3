@@ -1,0 +1,17 @@
+{
+	"name": "Go",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"forwardPorts": [80, 443],
+	"portsAttributes": {
+		"80": {
+			"label": "http",
+			"onAutoForward": "notify"
+		},
+        "443": {
+			"label": "https",
+			"onAutoForward": "notify"
+		}
+	}
+}
