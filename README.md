@@ -16,21 +16,29 @@ You can add a http_redirect to automatically redirect `http` -> `https` like sho
 
 ```
 {
-  debug
-  order ja3 before respond
-  servers {
-     listener_wrappers {
-       http_redirect
-       ja3
-       tls
-     }
-  }
+	debug
+	log {
+		output stdout
+		format console
+	}
+	order ja3 before respond
+	servers {
+		listener_wrappers {
+			http_redirect
+			ja3
+			tls
+		}
+	}
 }
 
 localhost:2020 {
-  ja3
-  tls internal
-  respond "Your JA3: {header.ja3}"
+	ja3
+	tls internal
+	respond <<EOF
+          JA3 Hash: {header.ja3-hash}
+          JA3 String: {header.ja3-string}
+          JA3 SNI: {header.ja3-sni}
+          EOF 200
 }
 ```
 

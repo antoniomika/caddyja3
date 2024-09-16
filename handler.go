@@ -3,7 +3,7 @@ package caddyja3
 import (
 	"net/http"
 
-	"github.com/caddyserver/caddy/v2"
+	caddy "github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/caddy/v2/caddyconfig/httpcaddyfile"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp"
@@ -30,7 +30,7 @@ func (JA3Handler) CaddyModule() caddy.ModuleInfo {
 	}
 }
 
-// Provision implements caddy.Provisioner
+// Provision implements caddy.Provisioner.
 func (h *JA3Handler) Provision(ctx caddy.Context) error {
 	a, err := ctx.App(CacheAppId)
 	if err != nil {
@@ -42,13 +42,13 @@ func (h *JA3Handler) Provision(ctx caddy.Context) error {
 	return nil
 }
 
-// UnmarshalCaddyfile implements caddyfile.Unmarshaler
+// UnmarshalCaddyfile implements caddyfile.Unmarshaler.
 func (h *JA3Handler) UnmarshalCaddyfile(_ *caddyfile.Dispenser) error {
 	// no-op impl
 	return nil
 }
 
-// ServeHTTP implements caddyhttp.MiddlewareHandler
+// ServeHTTP implements caddyhttp.MiddlewareHandler.
 func (h *JA3Handler) ServeHTTP(rw http.ResponseWriter, req *http.Request, next caddyhttp.Handler) error {
 	if req.TLS.HandshakeComplete {
 		ja3 := h.cache.GetJA3(req.RemoteAddr)
@@ -57,14 +57,16 @@ func (h *JA3Handler) ServeHTTP(rw http.ResponseWriter, req *http.Request, next c
 			h.log.Error("ClientHello missing from cache for " + req.RemoteAddr)
 		} else {
 			h.log.Debug("Attaching JA3 to request for " + req.RemoteAddr)
-			req.Header.Add("JA3", *ja3)
+			req.Header.Add("JA3-String", ja3.GetJA3String())
+			req.Header.Add("JA3-Hash", ja3.GetJA3Hash())
+			req.Header.Add("JA3-SNI", ja3.GetSNI())
 		}
 	}
 
 	return next.ServeHTTP(rw, req)
 }
 
-// Interface guards
+// Interface guards.
 var (
 	_ caddy.Provisioner           = (*JA3Handler)(nil)
 	_ caddyhttp.MiddlewareHandler = (*JA3Handler)(nil)
